@@ -1,0 +1,29 @@
+
+{%extends 'layout.html'%}
+
+{%block content%}
+    
+<form action="/resultado" method="POST">
+    <label>N1:</label>
+    <input type="text" name="n1"/><br>
+    <label>N2:</label>
+    <input type="text" name="n2"/><br>
+    <label>
+      Operación:
+      <label>
+        <input type="radio" name="operation" value="suma" required> Suma
+      </label>
+      <label>
+        <input type="radio" name="operation" value="resta"> Resta
+      </label>
+      <label>
+        <input type="radio" name="operation" value="multi"> Multiplicación
+      </label>
+      <label>
+        <input type="radio" name="operation" value="divi"> División
+      </label>
+    </label>
+    <input type="submit" value="Calcular" >
+  </form>
+
+{%endblock%}
