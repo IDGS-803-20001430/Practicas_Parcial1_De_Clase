@@ -40,6 +40,10 @@ def formulario():
 def operaciones():
     return render_template("operaciones.html")
 
+@app.route("/cine")
+def cine():
+    return render_template("cine.html")
+
 # @app.route("/resultado",methods=["GET","POST"])
 # def resultado():
 #     if request.method=="POST":
@@ -65,7 +69,38 @@ def resultado():
             return "<h1>La mulltiplicacion es: {}</h1>".format(str(int(num1)*int(num2)))
         
         if op=="divi":
-            return "<h1>La division es: {}</h1>".format(str(int(num1)/int(num2)))    
+            return "<h1>La division es: {}</h1>".format(str(int(num1)/int(num2)))
+
+@app.route("/calcular", methods=["POST"])
+def calcular():
+    nombre = request.form.get("nombre")
+    cantidadCompradores = int(request.form.get("cantidadCompradores"))
+    tarjetaCineco = request.form.get("tarjetaCineco")
+    cantidadBoletos = int(request.form.get("cantidadBoletos"))
+
+    print("Nombre:", nombre)
+    print("Cantidad de compradores:", cantidadCompradores)
+    print("Tarjeta Cineco:", tarjetaCineco)
+    print("Cantidad de boletos:", cantidadBoletos)
+
+    precio_boleto = 12
+    costo_total = cantidadBoletos * precio_boleto
+
+    if cantidadBoletos > 5:
+        descuento = 0.15
+    elif cantidadBoletos >= 3:
+        descuento = 0.10
+    else:
+        descuento = 0
+
+    costo_con_descuento = costo_total - (costo_total * descuento)
+
+    if tarjetaCineco == "si":
+        descuento_tarjeta_cineco = 0.10
+        costo_con_descuento -= (costo_con_descuento * descuento_tarjeta_cineco)
+
+    return str(costo_con_descuento)
+
 
 if __name__=="__main__":
     app.run(debug=True)

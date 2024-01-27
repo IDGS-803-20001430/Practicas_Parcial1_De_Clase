@@ -1,0 +1,171 @@
+
+{%extends 'layout.html'%}
+
+{%block content%}
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<style>
+    .error-message {
+      color: red;
+    }
+
+    body {
+      background-image: url('../static/bootstrap/img/cine.png');      
+      font-family: Arial, sans-serif;
+      /* margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      display: flex; */
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+  
+    .form-container {
+      display: flex;
+      justify-content: space-between;
+      width: 600px;
+    }
+  
+    .left-container, .right-container {
+      width: 40%;
+      background-color: rgba(92, 92, 92, 0.811);
+      padding: 3%;
+    }
+  
+    .form-group {
+      margin-bottom: 15px;
+    }
+  
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+  
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+  
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+  
+    .button-container button {
+      padding: 10px 20px;
+      margin-right: 10px;
+    }
+  </style>
+<body>
+  <div class="form-container">
+
+    <div class="left-container">
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre">
+      </div>
+      <div class="form-group">
+        <label for="cantidadCompradores">Cantidad de compradores:</label>
+        <input type="number" id="cantidadCompradores" name="cantidadCompradores">
+      </div>
+      <label>Tarjeta Cineco:</label>
+      <div class="form-group" style="display: flex;">
+        <input type="radio" id="si" name="tarjetaCineco" value="si">
+        <label for="si">Sí</label>
+        <input type="radio" id="no" name="tarjetaCineco" value="no">
+        <label for="no">No</label>
+      </div>
+      <div class="form-group">
+        <label for="cantidadBoletos">Cantidad de boletos:</label>
+        <input type="number" id="cantidadBoletos" name="cantidadBoletos">
+      </div>
+    </div>
+
+    <div class="right-container">
+      <div class="form-group">
+        <label for="valorPagar">Valor a pagar:</label>
+        <input type="text" id="valorPagar" name="valorPagar" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button onclick="procesar()">Procesar</button>
+    <button onclick="salir()">Salir</button>
+  </div>
+
+  <div id="error-message-container" class="error-message"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    function procesar() {
+      if (validarCampos()) {
+        var nombre = document.getElementById("nombre").value;
+        var cantidadCompradores = document.getElementById("cantidadCompradores").value;
+        var tarjetaCineco = document.querySelector('input[name="tarjetaCineco"]:checked').value;
+        var cantidadBoletos = document.getElementById("cantidadBoletos").value;
+
+        var formData = new FormData();
+        formData.append("nombre", nombre);
+        formData.append("cantidadCompradores", cantidadCompradores);
+        formData.append("tarjetaCineco", tarjetaCineco);
+        formData.append("cantidadBoletos", cantidadBoletos);
+
+        $.ajax({
+          url: "/calcular",
+          method: "POST",
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            document.getElementById("valorPagar").value = response;
+            console.log(response);
+          },
+        });
+      }
+    }
+
+    function salir() {
+      document.getElementById("nombre").value = "";
+      document.getElementById("cantidadCompradores").value = "";
+      document.getElementById("si").checked = false;
+      document.getElementById("no").checked = false;
+      document.getElementById("cantidadBoletos").value = "";
+
+      document.getElementById("error-message-container").innerHTML = "";
+    }
+
+    function validarCampos() {
+      var nombre = document.getElementById("nombre").value;
+      var cantidadCompradores = document.getElementById("cantidadCompradores").value;
+      var tarjetaCineco = document.querySelector('input[name="tarjetaCineco"]:checked');
+      var cantidadBoletos = document.getElementById("cantidadBoletos").value;
+
+      if (!nombre || !cantidadCompradores || !tarjetaCineco || !cantidadBoletos) {
+        document.getElementById("error-message-container").innerHTML = "¡Debe llenar correctamente el formulario!";
+        return false;
+      }
+
+      if (cantidadCompradores <= 0 || cantidadBoletos <= 0) {
+        document.getElementById("error-message-container").innerHTML = "¡Ingrese valores válidos para campos numéricos!";
+        return false;
+      }
+
+      if (cantidadBoletos / cantidadCompradores > 7) {
+        document.getElementById("error-message-container").innerHTML = "¡No puede comprar más de 7 boletos por persona!";
+        return false;
+      }
+
+      document.getElementById("error-message-container").innerHTML = "";
+      return true;
+    }
+  </script>
+</body>
+  
+
+{%endblock%}
