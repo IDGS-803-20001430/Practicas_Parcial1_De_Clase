@@ -1,8 +1,88 @@
 from flask import Flask,render_template,request
 import math
 import distancia
+import resistencia
 
 app = Flask(__name__)
+
+
+color_css_mapping = {
+    'Negro': 'negro',
+    'Cafe': 'cafe',
+    'Rojo': 'rojo',
+    'Naranja': 'naranja',
+    'Amarillo': 'amarillo',
+    'Verde': 'verde',
+    'Azul': 'azul',
+    'Violeta': 'violeta',
+    'Gris': 'gris',
+    'Blanco': 'blanco'
+}
+
+@app.route("/resistencias",methods=["GET","POST"])
+def res():
+    multiplicadores = {
+        0: 1,
+        1: 10,
+        2: 100,
+        3: 1000,
+        4: 10000,
+        5: 100000,
+        6: 1000000,
+        7: 10000000,
+        8: 100000000,
+        9: 1000000000
+    }
+    color_nombres = {
+        0: 'Negro',
+        1: 'Cafe',
+        2: 'Rojo',
+        3: 'Naranja',
+        4: 'Amarillo',
+        5: 'Verde', 
+        6: 'Azul',
+        7: 'Violeta',
+        8: 'Gris',
+        9: 'Blanco',
+    }
+    
+    color1_nombre = ""
+    color2_nombre = ""
+    color3_nombre = ""
+    tolerancia_display = ''
+    tolerancia_color = ''
+    tolerancia = 0
+    resistenciaT = 0
+    resistenciaMin = 0
+    resistenciaMax = 0
+    porcentaje_tolerancia = 0.0
+    resistencia_form = resistencia.ResistenciaForm(request.form)
+    
+    if request.method == 'POST':
+        color1 = int(resistencia_form.color1.data)
+        color2 = int(resistencia_form.color2.data)
+        color3 = int(resistencia_form.color3.data)
+        tolerancia = int(resistencia_form.tolerancia.data)
+        
+        color1_nombre = color_nombres[color1]
+        color2_nombre = color_nombres[color2]
+        color3_nombre = color_nombres[color3]
+        
+        concat = str(color1) + str(color2)
+        resistenciaT = int(concat) * multiplicadores.get(color3, 1)
+        porcentaje_tolerancia = resistenciaT * (tolerancia / 100)
+        resistenciaMin = resistenciaT - porcentaje_tolerancia
+        resistenciaMax = resistenciaT + porcentaje_tolerancia
+
+    if tolerancia == 5:
+        tolerancia_display = 'Dorado'
+        tolerancia_color = 'goldenrod'  # Color para Dorado
+    elif tolerancia == 10:
+        tolerancia_display = 'Plata'
+        tolerancia_color = 'silver'  # Color para Plata
+
+    return render_template("resistencias.html", form=resistencia_form, color1=color1_nombre, color2=color2_nombre, color3=color3_nombre, tolerancia=tolerancia, resistenciaT=resistenciaT, resistenciaMin=resistenciaMin, resistenciaMax=resistenciaMax, tolerancia_display=tolerancia_display, tolerancia_color=tolerancia_color, color_css_mapping=color_css_mapping)
+    
 
 @app.route("/distancia",methods=["GET","POST"])
 def distan():
@@ -58,6 +138,11 @@ def formulario():
 @app.route("/")
 def operaciones():
     return render_template("operaciones.html")
+
+# @app.route("/resistencias")
+# def resistencias():
+#     return render_template("resistencias.html")
+
 
 @app.route("/cine")
 def cine():

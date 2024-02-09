@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% import "_macros.html" as macros %}
+<style>
+    .negro { background-color: black; color: white; }
+    .cafe { background-color: brown; color: white; }
+    .rojo { background-color: red; color: white; }
+    .naranja { background-color: orange; color: white; }
+    .amarillo { background-color: yellow; color: white; }
+    .verde { background-color: green; color: white; }
+    .azul { background-color: blue; color: white; }
+    .violeta { background-color: violet; color: white; }
+    .gris { background-color: gray; color: white; }
+    .blanco { background-color: white; color: black; }
+    
+    /* Estilo para el botón */
+    .btn-calcular {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-calcular:hover {
+        background-color: #0056b3;
+    }
+
+    /* Estilo para la tabla */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* Estilos para los selectores de colores */
+    .color-selector-container {
+        max-width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .color-selector {
+        width: 25%;
+        padding: 1%;
+    }
+</style>
+
+<h1>CALCULA LA RESISTENCIA</h1>            
+<form action="" method="post">
+    <div class="color-selector-container">
+        <div class="color-selector">
+            {{ macros.render_field(form.color1) }}
+        </div>
+        <div class="color-selector">
+            {{ macros.render_field(form.color2) }}
+        </div>
+        <div class="color-selector">
+            {{ macros.render_field(form.color3) }}
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center; padding: 1%;">
+        {{ macros.render_field(form.tolerancia) }}
+    </div>
+    <center>
+        <input type="submit" name="btn1" value="Calcular Resistencia" class="btn-calcular">
+    </center>
+</form>
+
+<h2>Resultados:</h2>
+<table border="1">
+    <tr>
+        <th>Color 1</th>
+        <th>Color 2</th>
+        <th>Color 3</th>
+        <th>Tolerancia (%)</th>
+        <th>Resistencia Total</th>
+        <th>Resistencia Mínima</th>
+        <th>Resistencia Máxima</th>
+    </tr>
+    <tr>
+        <td class="{{ color_css_mapping.get(color1, '') }}">{{ color1 }}</td>
+        <td class="{{ color_css_mapping.get(color2, '') }}">{{ color2 }}</td>
+        <td class="{{ color_css_mapping.get(color3, '') }}">{{ color3 }}</td>
+        <td style="background-color:{{ tolerancia_color }}; color: white;">{{ tolerancia}}%</td>
+        <td>{{ resistenciaT }}</td>
+        <td>{{ resistenciaMin }}</td>
+        <td>{{ resistenciaMax }}</td>
+    </tr>
+</table>
+{% endblock %}
