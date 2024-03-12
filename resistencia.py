@@ -1,6 +1,6 @@
 from wtforms import Form
-from wtforms import SelectField, RadioField
-
+from wtforms import SelectField, RadioField,StringField
+from wtforms import validators
 
 class ResistenciaForm(Form):
     colores = [
@@ -25,3 +25,21 @@ class ResistenciaForm(Form):
     color3 = SelectField('Color 3', choices=colores)
     tolerancia = RadioField('Tolerancia', choices=tolerancias)
     
+class DiccionarioForm(Form):
+    espanol=StringField('espanol',[
+        validators.DataRequired(message='el campo es requerido'),
+        validators.length(min=1, max=20, message='ingrese nombre valido')
+    ])
+    ingles=StringField('ingles',[
+        validators.DataRequired(message='el campo es requerido'),
+        validators.length(min=1, max=20, message='ingrese apellido valido')
+    ])
+    
+class BusquedaForm(Form):
+    opcionIdioma = RadioField('opcionIdioma', [
+        validators.DataRequired(message='el campo es requerido'),
+    ], choices=[(2, 'Español'), (1, 'Inglés')], default='espanol')
+    buscar = StringField('buscar',[
+        validators.DataRequired(message='el campo es requerido'),
+        validators.length(min=1, max=20, message='ingrese apellido valido')
+    ])

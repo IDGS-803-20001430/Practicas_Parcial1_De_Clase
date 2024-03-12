@@ -5,6 +5,51 @@ import resistencia
 
 app = Flask(__name__)
 
+@app.route("/diccionario", methods=["GET", "POST"])
+def diccionario():
+    espanol = ""
+    ingles = ""
+    buscar = ""
+    traduccion = ""
+    diccionario_form = resistencia.DiccionarioForm(request.form)
+    busqueda_form = resistencia.BusquedaForm(request.form)
+
+    if request.method == 'POST' and diccionario_form.validate():
+        espanol = diccionario_form.espanol.data
+        ingles = diccionario_form.ingles.data
+        
+        with open("diccionario.txt", "a") as archivo:
+            archivo.write(f"{ingles.upper()}={espanol.upper()}\n")
+
+    elif request.method == 'GET':
+        palabraBuscada = str(request.args.get('buscar'))
+        palabraBuscada = palabraBuscada.upper()
+        idioma=request.args.get('opcionIdioma')
+
+        print(palabraBuscada)
+        print(idioma)
+        
+        if palabraBuscada:
+            diccionario = {}
+            
+            # Haz algo con el idioma seleccionado (por ejemplo, imprimirlo)
+            print("Idioma seleccionado:", idioma)            
+
+            with open("diccionario.txt", "r") as archivo:
+                for linea in archivo:
+                    if "=" in linea:
+                        palabra_ingles, palabra_espanol = linea.strip().split("=")
+                        
+                        if idioma == '1':
+                            diccionario[palabra_espanol] = palabra_ingles
+                        else:
+                            diccionario[palabra_ingles] = palabra_espanol
+                            
+
+            resultado = diccionario.get(palabraBuscada, "No se encontró traducción")
+
+    return render_template("diccionario.html", diccionario_form=diccionario_form, busqueda_form=busqueda_form, espanol=espanol, ingles=ingles, buscar=buscar, traduccion=resultado)
+    
 
 color_css_mapping = {
     'Negro': 'negro',
@@ -156,6 +201,7 @@ def cine():
 #         return "<h1>La multiplicacion es: {}</h1>".format(str(int(num1)*int(num2)))
     
 
+
 @app.route("/resultado",methods=["GET","POST"])
 def resultado():
     if request.method=="POST":
@@ -174,6 +220,7 @@ def resultado():
         
         if op=="divi":
             return "<h1>La division es: {}</h1>".format(str(int(num1)/int(num2)))
+
 
 @app.route("/calcular", methods=["POST"])
 def calcular():

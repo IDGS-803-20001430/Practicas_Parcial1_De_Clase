@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% import "_macros.html" as macros %}
+<h1>Diccionario</h1>
+<form action="" method="post">
+    <div>
+        {{macros.render_field(diccionario_form.espanol)}}
+        {{macros.render_field(diccionario_form.ingles)}}
+    </div>
+
+    <div>
+        <input type="submit" name="ingresar" value="Submit">
+    </div>
+</form>
+
+<h1>Buscar</h1>
+<form action="" method="get">
+    <div>
+        {{macros.render_field(busqueda_form.opcionIdioma)}}
+        {{macros.render_field(busqueda_form.buscar)}}
+    </div>
+    <input type="submit" name="buscar" value="Buscar">
+</form>
+<h2>Traducción:</h2>
+<p>{{ traduccion }}</p>
+
+
+{% endblock %}
